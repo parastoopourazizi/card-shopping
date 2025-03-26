@@ -2,30 +2,32 @@ import { createContext, useState } from "react";
 
 export const shopContext = createContext(null);
 
-export const shopContextProvider = (props) => {
+export const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState([]);
 
   const addToCart = (itemId) => {
-    if (!cartItems?.find((item) => item.id === itemId))
-      setCartItems([...cartItems, { id: itemId, count: 1 }]);
-    else
-      setCartItems(
-        cartItems.map((item) => {
-          if (item.id === itemId) return { ...item, count: item.count + 1 };
-          else return item;
-        })
-      );
+    setCartItems((prevItems) => {
+      const itemExists = prevItems.find((item) => item.id === itemId);
+      return itemExists
+        ? prevItems.map((item) =>
+            item.id === itemId ? { ...item, count: item.count + 1 } : item
+          )
+        : [...prevItems, { id: itemId, count: 1 }];
+    });
   };
+
   const removeFromCart = (itemId) => {
-    setCartItems(
-      cartItems.map((i) => {
-        if (i.id === itemId)
-          return { ...i, count: i.count === 0 ? 0 : i.count - 1 };
-        else return i;
-      })
+    setCartItems((prevItems) =>
+      prevItems
+        .map((item) =>
+          item.id === itemId ? { ...item, count: item.count - 1 } : item
+        )
+        .filter((item) => item.count > 0)
     );
   };
+
   const contextValue = { cartItems, addToCart, removeFromCart };
+
   return (
     <shopContext.Provider value={contextValue}>
       {props.children}
