@@ -6,26 +6,33 @@ export const shopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState([]);
 
   const addToCart = (itemId) => {
-    if (!cartItems?.find((item) => item.id === itemId))
-      setCartItems([...cartItems, { id: itemId, count: 1 }]);
-    else
-      setCartItems(
-        cartItems.map((item) => {
-          if (item.id === itemId) return { ...item, count: item.count + 1 };
-          else return item;
-        })
-      );
+    setCartItems((prevItems) => {
+      const itemIndex = prevItems.findIndex((item) => item.id === itemId);
+      if (itemIndex === -1) {
+        // Item is not in cart yet, add it
+        return [...prevItems, { id: itemId, count: 1 }];
+      } else {
+        // Item already exists, increment count
+        const updatedItems = [...prevItems];
+        updatedItems[itemIndex].count += 1;
+        return updatedItems;
+      }
+    });
   };
+
   const removeFromCart = (itemId) => {
-    setCartItems(
-      cartItems.map((i) => {
-        if (i.id === itemId)
-          return { ...i, count: i.count === 0 ? 0 : i.count - 1 };
-        else return i;
-      })
-    );
+    setCartItems((prevItems) => {
+      const updatedItems = prevItems
+        .map((item) =>
+          item.id === itemId ? { ...item, count: item.count - 1 } : item
+        )
+        .filter((item) => item.count > 0);
+      return updatedItems;
+    });
   };
+
   const contextValue = { cartItems, addToCart, removeFromCart };
+
   return (
     <shopContext.Provider value={contextValue}>
       {props.children}
