@@ -9,7 +9,7 @@ import { ShopContextProvider } from "./context/shopContext";
 function App() {
   return (
     <div className="App">
-      <shopContextProvider>
+      <ShopContextProvider>
         <Router>
           <Nav />
 
@@ -18,7 +18,7 @@ function App() {
             <Route path="/card" element={<Card />} />
           </Routes>
         </Router>
-      </shopContextProvider>
+      </ShopContextProvider>
     </div>
   );
 }
