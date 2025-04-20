@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { createContext, useState } from "react";
 
-export const useCart = () => {
+export const ShopContext = createContext(null);
+
+export const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState([]);
+
   const addToCart = (itemId) => {
     if (!cartItems?.find((item) => item.id === itemId))
       setCartItems([...cartItems, { id: itemId, count: 1 }]);
@@ -24,5 +27,10 @@ export const useCart = () => {
       })
     );
   };
-  return { cartItems, addToCart, removeFromCart };
+  const contextValue = { cartItems, addToCart, removeFromCart };
+  return (
+    <ShopContext.Provider value={contextValue}>
+      {props.children}
+    </ShopContext.Provider>
+  );
 };
